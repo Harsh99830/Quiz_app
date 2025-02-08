@@ -1,27 +1,45 @@
 import React, { useEffect, useState } from 'react'
-import data from '../database/data'
+import { useSelector } from 'react-redux'
+
+import { useFetchQuestion } from '../hooks/FetchQuestion'
 
 function Questions() {
 
     const [checked, setChecked] = useState(undefined)
+   const [{ isLoading, apiData, serverError}] =  useFetchQuestion()
 
-    const question = data[0]
+    const questions = useSelector(state => state.questions?.queue?.[state.questions.trace]);
 
     useEffect(() => {
-        console.log(question)
-    }, [])
+        if (questions) {
+            console.log(questions);
+        }
+    }, [questions]);
+    
+
+    useEffect(() => {
+    // console.log(apiData)
+    })
 
     function onSelect() {
-        console.log('radio button change')
+        // console.log('radio button change')
     }
+
+    if(isLoading) {
+        return <h2 className='text-light'>Loading...</h2>
+    } 
+
+    if(serverError) {
+      return <h2 className='text-light'>{serverError || "Unknown Error"}</h2>
+  } 
   return (
     <div className='questions'>
-        <h2 className='text-light'>{question.question}</h2>
+        <h2 className='text-light'>{questions?.question}</h2>
 
         
-        <ul key={question.id}>
+        <ul key={questions?.id}>
            {
-            question.options.map((q, i) => {
+            questions?.options.map((q, i) => {
                 return(
                 <li key={i}>
                 <input
