@@ -1,33 +1,40 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { useFetchQuestion } from '../hooks/FetchQuestion'
+import { updateResult } from '../hooks/setResult'
 
-function Questions() {
+function Questions( { onChecked }) {
 
     const [checked, setChecked] = useState(undefined)
-   const [{ isLoading, apiData, serverError}] =  useFetchQuestion()
+    const { trace } = useSelector(state => state.questions)
+    const result = useSelector(state => state.result.result)
+    const [{ isLoading, apiData, serverError}] =  useFetchQuestion()
 
     const questions = useSelector(state => state.questions?.queue?.[state.questions.trace]);
-
+    const dispatch = useDispatch()
     useEffect(() => {
         if (questions) {
-            console.log(questions);
+        // console.log(questions);
         }
     }, [questions]);
     
 
     useEffect(() => {
-    // console.log(apiData)
-    })
+        // console.log({ trace, checked })
+        dispatch(updateResult({ trace, checked }))
+    }, [checked, dispatch, trace]) 
 
-    function onSelect() {
-        // console.log('radio button change')
+    function onSelect(i) {
+        // console.log(i)
+        onChecked(i)
+        setChecked(i)
+
     }
 
     if(isLoading) {
         return <h2 className='text-light'>Loading...</h2>
-    } 
+    }
 
     if(serverError) {
       return <h2 className='text-light'>{serverError || "Unknown Error"}</h2>
@@ -47,11 +54,11 @@ function Questions() {
                  value={checked}
                  name='options'
                   id={`q${i}-option`}
-                  onChange={onSelect}
+                  onChange= {() => onSelect(i)}
                   />
 
                   <label className='text-primary' htmlFor={`q${i}-option`}>{q}</label>
-                  <div className='check checked'></div>
+                  <div className={`check ${result[trace] === i ? 'checked' : ''} `}></div>
             </li>
                 )
             })
