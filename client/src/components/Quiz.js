@@ -12,9 +12,9 @@ function Quiz() {
   const {queue, trace}  = useSelector(state => state.questions)
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log(result)
-  })
+  // useEffect(() => {
+  //   console.log(result)
+  // })
 
   function onNext() {
     console.log('next')
@@ -25,6 +25,8 @@ function Quiz() {
         dispatch(PushAnswer(check))
       }
     }
+
+    setChecked(undefined)
   }
 
   function onPrev() {
